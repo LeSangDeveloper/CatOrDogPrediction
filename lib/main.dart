@@ -15,8 +15,8 @@ class MainApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Cat Or Dog")
         ),
-        body: Center(
-          child: const Text("Dog or Cat"),
+        body: const Center(
+          child: Text("Dog or Cat"),
         ),
       ),
     );
