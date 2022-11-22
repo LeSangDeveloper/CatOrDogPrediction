@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const MainApp());
@@ -30,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late File _imageFile;
+  File? _imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-                child: Image.network('https://i.imgur.com/sUFH1Aq.png')
+                child: (_imageFile != null) ? Image.file(_imageFile!) : Image.network('https://i.imgur.com/sUFH1Aq.png')
             ),
             ElevatedButton(
-                onPressed: (){
-                  debugPrint('Load Image test');
-                },
+                onPressed: selectImg,
                 child: const Icon(Icons.camera)
             ),
           ],
@@ -72,6 +71,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  Future selectImg() async {
+    var picker = ImagePicker();
+    var image = await picker.pickImage(source: ImageSource.gallery, maxHeight: 300);
+    setState(() {
+      if (image != null) {
+        _imageFile = File(image.path);
+      } else {
+        debugPrint("No image is selected!");
+      }
+    });
+  }
+
 }
 
 
