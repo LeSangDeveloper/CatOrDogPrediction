@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tflite/tflite.dart';
 
 void main() {
   runApp(const MainApp());
@@ -15,6 +16,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -32,6 +34,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File? _imageFile;
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadImageModel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +91,16 @@ class _MyHomePageState extends State<MyHomePage> {
         debugPrint("No image is selected!");
       }
     });
+  }
+
+  Future loadImageModel() async {
+    Tflite.close();
+    String? result;
+    result = await Tflite.loadModel(
+      model: "assets/model.tflite",
+      labels: "assets/labels.txt",
+    );
+    debugPrint(result);
   }
 
 }
