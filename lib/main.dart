@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Cat Dog Identifier")
+          title: const Text("Cat Dog Classification")
       ),
       body: Center(
         child: Column(
@@ -89,6 +89,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: const Icon(Icons.camera)
             ),
+            const SizedBox(height: 20),
+            SingleChildScrollView(
+              child: Column(
+                children: _classifiedResult != null ? _classifiedResult!.map((result) {
+                  return Card(
+                    elevation: 0.0,
+                    color: Colors.indigo.shade500,
+                    child: Container(
+                      width: 300,
+                      margin: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Text(
+                          "${result["label"]} :  ${(result["confidence"] * 100).toStringAsFixed(1)}%",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  );
+                 }).toList() : [],
+              ),
+            )
           ],
         ),
       ),
@@ -98,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future selectImg() async {
     var picker = ImagePicker();
     var image = await picker.pickImage(source: ImageSource.gallery, maxHeight: 300);
-    classifyImage(image!);
+    classifyImage(image);
   }
 
   Future loadImageModel() async {
@@ -111,9 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint(result);
   }
 
-  Future classifyImage(XFile image) async {
-    _classifiedResult = null;
-    final List? result = await Tflite.runModelOnImage(path: image.path, numResults: 6);
+  Future classifyImage(XFile? image) async {
+    final List? result = await Tflite.runModelOnImage(path: image!.path, numResults: 6);
     debugPrint("classification done!!!");
     setState(() {
       if (image != null) {
