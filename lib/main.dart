@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File? _imageFile;
-
+  List? _classifiedResult;
 
   @override
   void initState() {
@@ -84,13 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future selectImg() async {
     var picker = ImagePicker();
     var image = await picker.pickImage(source: ImageSource.gallery, maxHeight: 300);
-    setState(() {
-      if (image != null) {
-        _imageFile = File(image.path);
-      } else {
-        debugPrint("No image is selected!");
-      }
-    });
+    classifyImage(image!);
   }
 
   Future loadImageModel() async {
@@ -101,6 +95,21 @@ class _MyHomePageState extends State<MyHomePage> {
       labels: "assets/labels.txt",
     );
     debugPrint(result);
+  }
+
+  Future classifyImage(XFile image) async {
+    _classifiedResult = null;
+    final List? result = await Tflite.runModelOnImage(path: image.path, numResults: 6);
+    debugPrint(result?.isNotEmpty.toString());
+    debugPrint("classification done!!!");
+    setState(() {
+      if (image != null) {
+        _imageFile = File(image.path);
+        _classifiedResult = result;
+      } else {
+        debugPrint('No image selected.');
+      }
+    });
   }
 
 }
