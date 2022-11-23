@@ -19,8 +19,12 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
+    return MaterialApp(
+      home: const MyHomePage(),
+      theme: ThemeData(appBarTheme: AppBarTheme(
+        backgroundColor: Colors.indigo.shade800,
+        foregroundColor: Colors.white
+      )),
     );
   }
 }
@@ -73,6 +77,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
                 onPressed: selectImg,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                        (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return Colors.indigo.shade800;
+                      }
+                      return Colors.indigo.shade600; // Use the component's default.
+                    },
+                  ),
+                ),
                 child: const Icon(Icons.camera)
             ),
           ],
@@ -100,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future classifyImage(XFile image) async {
     _classifiedResult = null;
     final List? result = await Tflite.runModelOnImage(path: image.path, numResults: 6);
-    debugPrint(result?.isNotEmpty.toString());
     debugPrint("classification done!!!");
     setState(() {
       if (image != null) {
